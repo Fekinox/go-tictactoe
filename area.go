@@ -41,3 +41,12 @@ func (a Area) Contains(x, y int) bool {
 	ny := y - a.Y
 	return nx >= 0 && nx < a.Width && ny >= 0 && ny < a.Height
 }
+
+func (a Area) Inset(width, height int) Area {
+	return Area {
+		X: a.X + (a.Width - width)/2,
+		Y: a.Y + (a.Height - height)/2,
+		Width: width,
+		Height: height,
+	}
+}
