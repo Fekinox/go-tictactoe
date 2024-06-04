@@ -1,5 +1,7 @@
 package main
 
+import "github.com/gdamore/tcell/v2"
+
 const UPDATE_TICK_RATE_MS float64 = 1000.0 / 240.0
 
 var gridChars = []rune {
@@ -16,6 +18,10 @@ type EngineState struct {
 	focusY int
 }
 
+func IsRune(ev *tcell.EventKey, r rune) bool {
+	return (ev.Key() == tcell.KeyRune && ev.Rune() == r)
+}
+
 func InitEngineState() *EngineState {
 	return &EngineState{
 		LastUpdateDuration: UPDATE_TICK_RATE_MS,
@@ -23,7 +29,27 @@ func InitEngineState() *EngineState {
 	}
 }
 
+func (es *EngineState) HandleInput(ev tcell.Event) {
+	switch ev := ev.(type) {
+	case *tcell.EventKey:
+		if ev.Key() == tcell.KeyUp || IsRune(ev, 'w') || IsRune(ev, 'W') {
+			es.HandleMove(0, -1)
+		} else if ev.Key() == tcell.KeyDown || IsRune(ev, 's') || IsRune(ev, 'S') {
+			es.HandleMove(0, 1)
+		} else if ev.Key() == tcell.KeyLeft || IsRune(ev, 'a') || IsRune(ev, 'A') {
+			es.HandleMove(-1, 0)
+		} else if ev.Key() == tcell.KeyRight || IsRune(ev, 'd') || IsRune(ev, 'D') {
+			es.HandleMove(1, 0)
+		} else if IsRune(ev, ' ') {
+			es.HandlePlace()
+		} else if IsRune(ev, 'r') || IsRune(ev, 'R') {
+			es.HandleReset()
+		}
+	}
+}
+
 func (es *EngineState) Update() {
+	// Handle input
 }
 
 func (es *EngineState) Draw(lag float64) {
@@ -66,4 +92,15 @@ func (es *EngineState) DrawGrid(rr Area) {
 				nil, style)	
 		}
 	}
+}
+
+func (es *EngineState) HandleMove(dx, dy int) {
+	es.focusX = max(0, min(es.grid.Width-1, es.focusX + dx))
+	es.focusY = max(0, min(es.grid.Height-1, es.focusY + dy))
+}
+
+func (es *EngineState) HandleReset() {
+}
+
+func (es *EngineState) HandlePlace() {
 }

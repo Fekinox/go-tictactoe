@@ -64,7 +64,11 @@ func (a *App) Loop() {
 					return
 				} else if ev.Key() == tcell.KeyCtrlL {
 					Screen.Sync()
+				} else {
+					a.EngineState.HandleInput(ev)
 				}
+			default:
+				a.EngineState.HandleInput(ev)
 			}
 		}
 
