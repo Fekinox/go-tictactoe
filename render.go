@@ -47,6 +47,26 @@ func SetCenteredSpans(x, y int, spans ...Span) {
 	}
 }
 
+func SetGrid(x, y int, grid Grid[rune], style tcell.Style) {
+	for dy := 0; dy < grid.Height; dy++ {
+		for dx := 0; dx < grid.Width; dx++ {
+			Screen.SetContent(
+				x+dx,
+				y+dy,
+				grid.MustGet(dx, dy),
+				nil, style)
+		}
+	}
+}
+
+func FillRegion(x, y int, width, height int, c rune, style tcell.Style) {
+	for dy := 0; dy < height; dy++ {
+		for dx := 0; dx < width; dx++ {
+			Screen.SetContent(x+dx, y+dy, c, nil, style)
+		}	
+	}
+}
+
 func ShowResizeScreen(w, h int, style tcell.Style) {
 	SetCenteredString(w/2, h/2, "Screen too small!", style)
 	var widthColor, heightColor tcell.Color

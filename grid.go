@@ -39,6 +39,32 @@ func MakeGridWith[T any](width, height int, gen func(x, y int) T) Grid[T] {
 	}
 }
 
+func GridFromSlices[T any](slices ...[]T) Grid[T] {
+	height := len(slices)
+	width := len(slices[0])
+	data := make([]T, width * height)
+	for y := 0; y < height; y++ {
+		for x := 0; x < width; x++ {
+			data[y * width + x] = slices[y][x]
+		}
+	}
+
+	return Grid[T]{
+		data: data,
+		Width: width,
+		Height: height,
+	}
+}
+
+func GridFromStrings(strings ...string) Grid[rune] {
+	slices := make([][]rune, len(strings))
+	for i := 0; i < len(strings); i++ {
+		slices[i] = []rune(strings[i])	
+	}
+
+	return GridFromSlices(slices...)
+}
+
 func (g *Grid[T]) InBounds(x, y int) bool {
 	return x >= 0 && x < g.Width && y >= 0 && y < g.Height
 }
